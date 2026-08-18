@@ -1,25 +1,25 @@
-resource "aws_vpc" "terraform_vpc" {
+resource "aws_vpc" "terraform_pdtech_vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
 
   tags = {
-    Name = "tf-vpc"
+    Name = "tf-pdtech-vpc"
     CC = "123456"
-    Owner = "DevOps "
+    Owner = "DevOps"
   }
 }
 
-# Correcao primeira issue
+
 resource "aws_flow_log" "example" {
-  log_destination      = "arn:aws:s3:::clc15-pablo-terraform"
+  log_destination      = "arn:aws:s3:::pdtech-terraform"
   log_destination_type = "s3"
   traffic_type         = "ALL"
-  vpc_id               = aws_vpc.terraform_vpc.id
+  vpc_id               = aws_vpc.terraform_pdtech_vpc.id
 }
 
-# Correcao segunda issue
+
 resource "aws_default_security_group" "default" {
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id = aws_vpc.terraform_pdtech_vpc.id
   
   tags = {
     Name = "my-iac-sg"
@@ -30,7 +30,7 @@ resource "aws_default_security_group" "default" {
 
 ## Cria subnets na AZ 1A
 resource "aws_subnet" "subnet_public_1a" {
-  vpc_id     = aws_vpc.terraform_vpc.id
+  vpc_id     = aws_vpc.terraform_pdtech_vpc.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-1a"
 
@@ -40,7 +40,7 @@ resource "aws_subnet" "subnet_public_1a" {
 }
 
 resource "aws_subnet" "subnet_private_1a" {
-  vpc_id     = aws_vpc.terraform_vpc.id
+  vpc_id     = aws_vpc.terraform_pdtech_vpc.id
   cidr_block = "10.0.100.0/24"
   availability_zone = "us-east-1a"
 
@@ -51,7 +51,7 @@ resource "aws_subnet" "subnet_private_1a" {
 
 ## Cria subnets na AZ 1B
 resource "aws_subnet" "subnet_public_1b" {
-  vpc_id     = aws_vpc.terraform_vpc.id
+  vpc_id     = aws_vpc.terraform_pdtech_vpc.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-1b"
 
@@ -61,7 +61,7 @@ resource "aws_subnet" "subnet_public_1b" {
 }
 
 resource "aws_subnet" "subnet_private_1b" {
-  vpc_id     = aws_vpc.terraform_vpc.id
+  vpc_id     = aws_vpc.terraform_pdtech_vpc.id
   cidr_block = "10.0.200.0/24"
   availability_zone = "us-east-1b"
 
@@ -72,7 +72,7 @@ resource "aws_subnet" "subnet_private_1b" {
 
 ## Cria um Internet Gateway e associa na VPC ##
 resource "aws_internet_gateway" "tf_igw" {
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id = aws_vpc.terraform_pdtech_vpc.id
 
   tags = {
     Name = "tf-vpc-igw"
@@ -81,7 +81,7 @@ resource "aws_internet_gateway" "tf_igw" {
 
 ## Cria a tabela de rota publica apontando para o igw ##
 resource "aws_route_table" "tf_public_rt" {
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id = aws_vpc.terraform_pdtech_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -138,7 +138,7 @@ resource "aws_nat_gateway" "tf_natgateway_1b" {
 
 ## Cria tabela de rotas privadas para subnet 1A e 1B ##
 resource "aws_route_table" "tf_private_rt_1a" {
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id = aws_vpc.terraform_pdtech_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -151,7 +151,7 @@ resource "aws_route_table" "tf_private_rt_1a" {
 }
 
 resource "aws_route_table" "tf_private_rt_1b" {
-  vpc_id = aws_vpc.terraform_vpc.id
+  vpc_id = aws_vpc.terraform_pdtech_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
